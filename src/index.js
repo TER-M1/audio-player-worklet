@@ -1,5 +1,6 @@
 //@ts-check
 
+const mount = document.getElementById("mount");
 const audioUrl = "https://wasabi.i3s.unice.fr/WebAudioPluginBank/BasketCaseGreendayriffDI.mp3";
 
 const audioCtx = new AudioContext();
@@ -9,6 +10,20 @@ const btnStart = document.getElementById("btn-start");
 /** @type {HTMLInputElement} */
 // @ts-ignore
 const inputLoop = document.getElementById("input-loop");
+
+// Fonction to connect plugins of the audioNode.
+
+const connectPlugin = (sourceNode, audioNode) => {
+    sourceNode.connect(audioNode);
+    audioNode.connect(audioCtx.destination);
+}
+
+// Fonction to connect plugins of the audioNode.
+
+const mountPlugin = (domModel) => {
+    mount.innerHTML = '';
+    mount.appendChild(domModel);
+}
 
 (async () => {
     const { default: OperableAudioBuffer } = await import("./operable-audio-buffer.js");
@@ -28,6 +43,19 @@ const inputLoop = document.getElementById("input-loop");
     node.parameters.get("playing").value = 0;
     node.parameters.get("loop").value = 1;
 
+    // plugin loading and initialization
+
+    const { default: initializeWamHost } = await import("./plugins/testBern/utils/sdk/src/initializeWamHost.js");
+    const [hostGroupId] = await initializeWamHost(audioCtx);
+
+    const { default: WAM } = await import ("./plugins/testBern/index.js");
+    const instance = await WAM.createInstance(hostGroupId, audioCtx);
+    connectPlugin(node, instance._audioNode);
+
+    const pluginDomModel = await instance.createGui();
+    mountPlugin(pluginDomModel);
+
+    
     btnStart.onclick = () => {
         if (audioCtx.state === "suspended") audioCtx.resume();
         const playing = node.parameters.get("playing").value;
