@@ -47,23 +47,7 @@ function drawBuffer (canvas, buffer, color,width,height) {
     const audioArrayBuffer = await response.arrayBuffer();
     const audioBuffer = await audioCtx.decodeAudioData(audioArrayBuffer);
     var canva = document.querySelector("canvas");
-/*     // @ts-ignore
-    var Spectrum = WaveSurfer.create({
-        audioContext: audioCtx,
-        container: '#waveform',
-        progressColor: "#03a9f4",
-        barWidth: 1,
-        cursorWidth: 1,
-        pixelRatio: 1,
-        height: 100,
-        normalize: true,
-        responsive: true,
-        waveColor: '#ccc',
-        cursorColor: '#4a74a5'
-    });
 
-    Spectrum.loadDecodedBuffer(audioBuffer);
- */
    drawBuffer(canva,audioBuffer,'red',1000,300);
     /** @type {import("./operable-audio-buffer.js").default} */
     const operableAudioBuffer = Object.setPrototypeOf(audioBuffer, OperableAudioBuffer.prototype);
@@ -77,17 +61,17 @@ function drawBuffer (canvas, buffer, color,width,height) {
     btnStart.onclick = () => {
         if (audioCtx.state === "suspended"){ 
             audioCtx.resume(); 
-            // Spectrum.play();
+           
         }
         const playing = node.parameters.get("playing").value;
         if (playing === 1) {
             node.parameters.get("playing").value = 0;
             btnStart.textContent = "Start";
-            // Spectrum.pause();
+            
         } else {
             node.parameters.get("playing").value = 1;
             btnStart.textContent = "Stop";
-            // Spectrum.play();
+          
         }
     }
     inputLoop.checked = true;

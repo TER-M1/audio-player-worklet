@@ -7,9 +7,38 @@
     <title>Document</title>
 </head>
 <body>
-    <div id="waveform"></div>
+    <script src="https://unpkg.com/peaks.js/dist/peaks.js"></script>
+    <div id="zoomview-container"></div>
+    <div id="overview-container"></div>
+    <audio>
+    <source src="https://wasabi.i3s.unice.fr/WebAudioPluginBank/BasketCaseGreendayriffDI.mp3" type="audio/mpeg">
+    <!-- <source src="sample.ogg" type='audio/ogg codecs="vorbis"'> -->
+    </audio>
+    <script src="https://unpkg.com/peaks.js/dist/peaks.js"></script>
+    <script>
+    (function(Peaks) {
+      const options = {
+        zoomview: {
+          container: document.getElementById('zoomview-container')
+        },
+        overview: {
+          container: document.getElementById('overview-container')
+        },
+        mediaElement: document.querySelector('audio'),
+        webAudio: {
+          audioContext: new AudioContext()
+        }
+      };
+    
+      Peaks.init(options, function(err, peaks) {
+        // Do something when the waveform is displayed and ready
+      });
+    })(peaks);
+    </script>
+
+   <!--  <div id="waveform"></div>
     <canvas></canvas>
-    <br/>
+    <br/> -->
     <button id="btn-start" hidden>Start</button>
     <input type="checkbox" name="loop" id="input-loop" checked>
     <label for="loop">Loop</label>
