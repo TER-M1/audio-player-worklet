@@ -3,6 +3,7 @@
 const audioUrl = "https://wasabi.i3s.unice.fr/WebAudioPluginBank/BasketCaseGreendayriffDI.mp3";
 
 const audioCtx = new AudioContext();
+const gainNode = audioCtx.createGain();
 /** @type {HTMLButtonElement} */
 // @ts-ignore
 const btnStart = document.getElementById("btn-start");
@@ -10,6 +11,13 @@ const btnStart = document.getElementById("btn-start");
 // @ts-ignore
 const inputLoop = document.getElementById("input-loop");
 //@ts-ignore
+const volumeinput = document.getElementById("volume");
+
+//@ts-ignore
+const inputMute = document.getElementById("Mute");
+
+//@ts-ignore
+var launched ;
 
 
 function drawBuffer (canvas, buffer, color,width,height) {
@@ -35,7 +43,60 @@ function drawBuffer (canvas, buffer, color,width,height) {
           }
         ctx.fillRect(i,(1+min)*amp,1,Math.max(1,(max-min)*amp));
       }
+
+      
   }
+ 
+function drawLine(canvas,audioBuffer){
+    launched = true;
+    var ctx = canvas.getContext('2d');
+    var x = 0;
+    var y = 50;
+    var width = 10;
+    var height = 10;
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBuffer(canvas,audioBuffer,'red',1000,300);
+        ctx.fillStyle = "black";
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+        x++;
+        if(x <= canvas.width) {
+            setTimeout(animate, 33);
+        }
+        if(x > canvas.width){
+            launched = false;
+        }
+    }
+    animate();
+}
+
+
+
+
+  const connectPlugin = (sourceNode, audioNode) => {
+    sourceNode.connect(audioNode);
+    audioNode.connect(audioCtx.destination);
+}
+
+  function changeVol (vol){
+      
+      if(vol.value == 0 ){
+        gainNode.gain.value = -1;
+      }
+      // @ts-ignore
+      else if( !inputMute.checked) {
+
+        gainNode.gain.value =  vol.value *  0.01;
+      }
+      
+    }
+function muteUnmuteTrack(btn){
+    console.log(btn);
+
+}
 
 
 (async () => {
@@ -47,23 +108,7 @@ function drawBuffer (canvas, buffer, color,width,height) {
     const audioArrayBuffer = await response.arrayBuffer();
     const audioBuffer = await audioCtx.decodeAudioData(audioArrayBuffer);
     var canva = document.querySelector("canvas");
-/*     // @ts-ignore
-    var Spectrum = WaveSurfer.create({
-        audioContext: audioCtx,
-        container: '#waveform',
-        progressColor: "#03a9f4",
-        barWidth: 1,
-        cursorWidth: 1,
-        pixelRatio: 1,
-        height: 100,
-        normalize: true,
-        responsive: true,
-        waveColor: '#ccc',
-        cursorColor: '#4a74a5'
-    });
 
-    Spectrum.loadDecodedBuffer(audioBuffer);
- */
    drawBuffer(canva,audioBuffer,'red',1000,300);
     /** @type {import("./operable-audio-buffer.js").default} */
     const operableAudioBuffer = Object.setPrototypeOf(audioBuffer, OperableAudioBuffer.prototype);
@@ -71,23 +116,26 @@ function drawBuffer (canvas, buffer, color,width,height) {
 
     node.setAudio(operableAudioBuffer.toArray());
     node.connect(audioCtx.destination);
+    connectPlugin(node, gainNode);
     node.parameters.get("playing").value = 0;
     node.parameters.get("loop").value = 1;
+    
 
     btnStart.onclick = () => {
         if (audioCtx.state === "suspended"){ 
-            audioCtx.resume(); 
-            // Spectrum.play();
+            audioCtx.resume();
+            
+            
         }
         const playing = node.parameters.get("playing").value;
         if (playing === 1) {
             node.parameters.get("playing").value = 0;
             btnStart.textContent = "Start";
-            // Spectrum.pause();
         } else {
             node.parameters.get("playing").value = 1;
             btnStart.textContent = "Stop";
-            // Spectrum.play();
+            if(!launched){
+            drawLine(canva,audioBuffer); }
         }
     }
     inputLoop.checked = true;
@@ -102,6 +150,18 @@ function drawBuffer (canvas, buffer, color,width,height) {
         }
     }
     btnStart.hidden = false;
+  
+    inputMute.onchange = () => {
+        console.log(inputMute)
+
+        // @ts-ignore
+        if( inputMute.checked){
+            gainNode.gain.value = -1;
+        }
+        else{
+            changeVol(volumeinput)
+        }
+    }
 
 
 })();
