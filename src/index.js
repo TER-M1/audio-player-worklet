@@ -9,7 +9,7 @@ const gainNode = audioCtx.createGain();
 const btnStart = document.getElementById("btn-start");
 /** @type {HTMLInputElement} */
 // @ts-ignore
-const inputLoop = document.getElementById("input-loop");
+const inputLoop = document.getElementById("btn-check-2-outlined");
 //@ts-ignore
 const volumeinput = document.getElementById("volume");
 
@@ -18,6 +18,8 @@ const inputMute = document.getElementById("Mute");
 
 //@ts-ignore
 var launched ;
+//@ts-ignore
+var paused = false;
 
 
 function drawBuffer (canvas, buffer, color,width,height) {
@@ -47,29 +49,35 @@ function drawBuffer (canvas, buffer, color,width,height) {
       
   }
  
+// @ts-ignore
 function drawLine(canvas,audioBuffer){
     launched = true;
     var ctx = canvas.getContext('2d');
     var x = 0;
+    // @ts-ignore
     var y = 50;
+    // @ts-ignore
     var width = 10;
+    // @ts-ignore
     var height = 10;
     function animate() {
+        if(!paused){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawBuffer(canvas,audioBuffer,'red',1000,300);
-        ctx.fillStyle = "black";
+/*         drawBuffer(canvas,audioBuffer,'red',1000,300);
+ */     ctx.fillStyle = "black";
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvas.height);
         ctx.stroke();
-        x++;
-        if(x <= canvas.width) {
+        x++;}
+        if(x <= canvas.width ) {
             setTimeout(animate, 33);
         }
         if(x > canvas.width){
             launched = false;
         }
     }
+    
     animate();
 }
 
@@ -107,9 +115,22 @@ function muteUnmuteTrack(btn){
     const response = await fetch(audioUrl);
     const audioArrayBuffer = await response.arrayBuffer();
     const audioBuffer = await audioCtx.decodeAudioData(audioArrayBuffer);
-    var canva = document.querySelector("canvas");
-
-   drawBuffer(canva,audioBuffer,'red',1000,300);
+    var canvas0 = document.getElementById("layer0");
+    var canvas1 = document.getElementById("layer1");
+    // @ts-ignore
+    canvas0.height = 300;
+    // @ts-ignore
+    canvas0.width = 1000;
+    // @ts-ignore
+    canvas1.height = 300;
+    // @ts-ignore
+    canvas1.width = 1000;
+    console.log(canvas0);
+    console.log(canvas1);
+    
+    
+    
+   drawBuffer(canvas0,audioBuffer,'red',1000,300);
     /** @type {import("./operable-audio-buffer.js").default} */
     const operableAudioBuffer = Object.setPrototypeOf(audioBuffer, OperableAudioBuffer.prototype);
     const node = new AudioPlayerNode(audioCtx, 2);
@@ -131,11 +152,13 @@ function muteUnmuteTrack(btn){
         if (playing === 1) {
             node.parameters.get("playing").value = 0;
             btnStart.textContent = "Start";
+            paused = true;
         } else {
             node.parameters.get("playing").value = 1;
             btnStart.textContent = "Stop";
+            paused = false;
             if(!launched){
-            drawLine(canva,audioBuffer); }
+            drawLine(canvas1,audioBuffer); }
         }
     }
     inputLoop.checked = true;

@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/fr0stbyter/audio-player-worklet/issues"
   },
-  "homepage": "https://github.com/fr0stbyter/audio-player-worklet#readme"
+  "homepage": "https://github.com/fr0stbyter/audio-player-worklet#readme",
+  "dependencies": {
+    "fomantic-ui-css": "^2.8.8"
+  }
 }
