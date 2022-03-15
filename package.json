@@ -23,6 +23,8 @@
   "homepage": "https://github.com/fr0stbyter/audio-player-worklet#readme",
   "dependencies": {
     "fomantic-ui-css": "^2.8.8",
-    "peaks.js": "^0.28.1"
+    "konva": "^8.3.3",
+    "peaks.js": "^0.28.1",
+    "waveform-data": "^4.3.0"
   }
 }
