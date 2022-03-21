@@ -10,17 +10,21 @@
     <title>Audio Player TER</title>
 </head>
 <body>
-    <div id="waveform">
-    <canvas id="layer0"></canvas>
-    <canvas id ="layer1"></canvas>
+    
+    <div id="waveform" >
+        <canvas id="layer0"></canvas>
+        <canvas id ="layer1"></canvas>
     </div>
+
     <br/>
+    <button id="restart" class = "btn btn-outline-secondary">restart</button>
     <button id="btn-start" class = "btn btn-outline-secondary"hidden>Start</button>
     <input type="checkbox" class="btn-check" id="btn-check-2-outlined" checked autocomplete="off">
     <label class="btn btn-outline-secondary" for="btn-check-2-outlined">Loop</label>
-    <!-- <input type="checkbox" name="loop" id="input-loop" class="form-check-input mt-0"  checked>
-    <label for="loop">Loop</label> -->
-    <span id="volspan"><input type="range" class="volumeSlider custom" id="volume" min="0" max="100" value="100" onchange="changeVol(this);"></span><label for="volume">Volume</label>
+    <!-- debug buttopn for the playhead -->
+    <button id="time" class = "btn btn-outline-secondary">time</button> 
+
+    <span id="volspan"><input type="range" class="volumeSlider custom" id="volume" min="0" max="100000" value="200000" onchange="changeVol(this);"></span><label for="volume">Volume</label>
     <br/>
     <input type="checkbox" name="Mute" id="Mute" unchecked>
     <label for="Mute">Mute</label>
